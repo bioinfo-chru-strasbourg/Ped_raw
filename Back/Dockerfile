@@ -1,4 +1,4 @@
-FROM centos:7
+FROM almalinux:8
 # WORKDIR /home1/data/WORKDIR_SOLENE/Ped_raw/Back
 # COPY . .
 ENV LC_CTYPE=en_US.UTF-8

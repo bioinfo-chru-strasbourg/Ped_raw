@@ -82,11 +82,13 @@
 <script>
 import axios from 'axios';
 import { ref } from 'vue';
+import { getBackendURL } from '@/common'
+
 export default {
   name: 'Ping',
   data() {
     return {
-      serverURL: "http://int0663.hus-integration.fr:4280",
+      serverURL: getBackendURL(),
       msg: ref('MEDINA Solène !'),
 
 

@@ -8,16 +8,18 @@ services:
         volumes:
             - ${BACKPATH}:/Back:rw
             - ${DATAPATH}:/Data:rw
-        ports: 
+        ports:
             - 4280:4280
         networks:
             - solene_network
 
     frontend:
         build: ./Front
+        environment:
+            - VITE_BACKEND=${BACK_SERVER}:${BACK_PORT}
         volumes:
             - ${FRONTPATH}:/Front:rw
-        ports: 
+        ports:
             - ${EXTPORT}:5173
         networks:
             - solene_network

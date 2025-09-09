@@ -30,3 +30,5 @@ Back/*test.*
 *test.*
 Data/
 Back/__pycache__/
+
+.env

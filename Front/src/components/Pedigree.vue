@@ -258,6 +258,7 @@ import { ref } from 'vue';
 import { isEqual } from 'lodash';
 import { FilterMatchMode } from "primevue/api";
 import { saveAs } from 'file-saver';
+import { getBackendURL } from '@/common'
 
 
 
@@ -265,7 +266,7 @@ import { saveAs } from 'file-saver';
 export default {
   data() {
     return {
-      serverURL: "http://int0663.hus-integration.fr:4280",
+      serverURL: getBackendURL(),
       peds: ref(),
       ped: ref({ "id": "", "famID": "", "paternalID": "", "maternalID": "", "sex": "Unknown", "phenotype": "Missing", "alias": "", "HPOList": [], "starkTags": [] }),
       originalTable: ref(false),
