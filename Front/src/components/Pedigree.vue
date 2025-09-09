@@ -15,7 +15,7 @@
         <template #start>
           <span
             v-tooltip.right="{ value: `<h6> Use this button when you have selected a database if you want to add a row. Don't forget to save your changes. </h6>`, escape: true, class: 'custom-error' }">
-            <Button class="m-1" label="Add" icon="pi pi-plus" severity="success" @click="pedDialog = true"
+            <Button class="m-1" label="Add" icon="pi pi-plus" severity="success" @click="onAddButtonClicked"
               :disabled="!isBaseSelected" /> </span>
           <span
             v-tooltip.bottom="{ value: `<h6> Select rows and use this button to delete them. Don't forget to save your changes. </h6>`, escape: true, class: 'custom-error' }">
@@ -575,6 +575,17 @@ export default {
           this.showError = true;
         })
       this.typeFile = '';
+    },
+    onAddButtonClicked() {
+      // Get the maximum famID number, increment it and suggest it for the new entry (ignoring "FAM" prefix, no matter its case)
+      const maxFamID = Math.max(
+        0,
+        ...this.peds
+            .map(ped => parseInt(ped.famID?.replace(/FAM/i, '') || 0))
+          .filter(num => !isNaN(num))
+      );
+      this.ped.famID = `fam${String(maxFamID + 1).padStart(3, '0')}`;
+      this.pedDialog = true;
     },
 
   },
