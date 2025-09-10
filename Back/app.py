@@ -68,18 +68,19 @@ def get_files():
     files = glob.glob(osj(DATA_PATH, "*.json"))
     return files
 
+def get_peds_rootnames(files:list) -> list[str]:
+    """
+    Example
+        input ["/Data/BBS_RP.json", "/Data/DI.json", "/Data/WES.json"]
+        output ["BBS_RP", "DI", "WES"]
+    """
+    file_list = []
+    for f in files:
+        file_list.append(os.path.splitext(os.path.basename(f))[0])
+    return file_list
 
-def get_name_file(files: list, mode: str):
-    if mode == "split":
-        file_list = []
-        for file in files:
-            split = file.split("/")
-            file_list.append(split[len(split) - 1][:-5])
-        return file_list
-    elif mode == "get":
-        my_file = osj(DATA_PATH, files + ".json")
-        return my_file
-
+def get_ped_path(file_name: str) -> str:
+    return osj(DATA_PATH, file_name + ".json")
 
 def ped_code(line):
     if line["sex"] == "M":
@@ -103,9 +104,7 @@ def all_files():
 
         files = get_files()
         selected_base = request.get_json()["mybase"]
-        session["CURRENT_FILE"] = get_name_file(
-            selected_base, "get"
-        )  # get the session value
+        session["CURRENT_FILE"] = get_ped_path(selected_base)  # get the session value
 
         if session["CURRENT_FILE"] not in files:  # create new file
             session["CURRENT_FILE"] = osj(DATA_PATH, session["CURRENT_FILE"])
@@ -119,9 +118,10 @@ def all_files():
     elif request.method == "GET":
 
         files = get_files()
-        paths = get_name_file(files, "split")
+        paths = get_peds_rootnames(files)
         return jsonify(sorted(paths))
-
+    else:
+        raise NotImplementedError("Only GET and POST requests implemented for /files")
 
 @app.route("/ped", methods=["GET", "POST"])
 def all_peds():
@@ -152,6 +152,7 @@ def upload_file():
         return error
 
     lines_list, extension = get_lines_content(post_data)
+    log.debug(f"lines_list:{lines_list}")
     separator = check_extension(extension, lines_list[0])
     if separator.startswith("Import"):
         error = separator
