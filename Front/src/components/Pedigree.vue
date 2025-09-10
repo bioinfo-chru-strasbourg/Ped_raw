@@ -319,11 +319,20 @@ export default {
         this.message = "The ID you are trying to edit is already used. Every row needs to have a unique ID, please try again."
         this.showError = true;
       } else {
+        newData = this.removeWhitespace(newData);
         this.peds[index] = newData;
         this.tablesChanged();
       }
-
-
+    },
+    removeWhitespace(data) {
+      Object.keys(data).forEach(key => {
+        if (Array.isArray(data[key])) {
+          data[key] = data[key].map(item => item.replace(/\s+/g, ''));
+        } else if (typeof data[key] === 'string') {
+          data[key] = data[key].replace(/\s+/g, '');
+        }
+      });
+      return data;
     },
     getPeds() {
       this.showError = false;
@@ -415,8 +424,16 @@ export default {
       this.showMessage = false;
       this.showError = false;
       const path = this.serverURL + '/ped';
+      
       this.payload = JSON.parse(JSON.stringify(this.peds));
+      // Remove spaces from HPOList
+      this.payload.forEach(ped => {
+        if (Array.isArray(ped.HPOList)) {
+          ped.HPOList = ped.HPOList.map(tag => tag.replace(/\s+/g, ''));
+        }
+      });
       console.log("payload (what will be saved)", this.payload);
+
       axios.post(path, this.payload, { withCredentials: true })
         .then(() => {
           this.originalTable = true;
@@ -459,7 +476,7 @@ export default {
         if (!this.ped.famID) {
           this.checkFamIDadd();
         }
-
+        this.ped = this.removeWhitespace(this.ped);
         this.peds.push(JSON.parse(JSON.stringify(this.ped))); //copie dans peds (deep copy)
         this.pedDialog = false;
         this.ped = { 'id': "", 'alias': "", "paternalID": "", "maternalID": "", "sex": "Unknown", "phenotype": "Missing", "HPOList": [], "starkTags": [] };
