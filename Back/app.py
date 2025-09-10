@@ -145,18 +145,16 @@ def all_peds():
 @app.route("/upload", methods=["POST"])
 def upload_file():
     post_data = request.files
-    id_list = []
-
-    if "file" not in request.files:
+    if "file" not in post_data:
         error = "Import error : No file imported"
         return error
 
     lines_list, extension = get_lines_content(post_data)
-    log.debug(f"lines_list:{lines_list}")
     separator = check_extension(extension, lines_list[0])
     if separator.startswith("Import"):
         error = separator
         return error
+    
     if isinstance(lines_list[0], list):
         file_as_list = lines_list
     else:
@@ -170,6 +168,7 @@ def upload_file():
         if isinstance(file_as_list, str) == True:
             error = file_as_list
             return error
+
     file_list, list_col_order = get_columns(file_as_list, extension)
     if list_col_order == None:
         error = file_list
@@ -178,6 +177,7 @@ def upload_file():
     peds_merged = merge_peds(dict_list)
 
     # unique ids
+    id_list = []
     for i in range(len(peds_merged)):
         id_list.append(peds_merged[i]["id"])
     if len(set(id_list)) != len(id_list):
