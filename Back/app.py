@@ -142,52 +142,51 @@ def all_peds():
         raise NotImplementedError("Only GET and POST requests implemented for /ped")
 
 
-@app.route("/upload", methods=["POST", "GET"])
+@app.route("/upload", methods=["POST"])
 def upload_file():
-    if request.method == "POST":
-        post_data = request.files
-        id_list = []
+    post_data = request.files
+    id_list = []
 
-        if "file" not in request.files:
-            error = "Import error : No file imported"
+    if "file" not in request.files:
+        error = "Import error : No file imported"
+        return error
+
+    lines_list, extension = get_lines_content(post_data)
+    separator = check_extension(extension, lines_list[0])
+    if separator.startswith("Import"):
+        error = separator
+        return error
+    if isinstance(lines_list[0], list):
+        file_as_list = lines_list
+    else:
+        if separator == "xlsx":
+            if "\t" in lines_list[0]:
+                separator = "\t"
+            else:
+                separator = ","
+        file_as_list = get_rows_list(lines_list, separator)
+        log.debug(f"files_as_list:{file_as_list}")
+        if isinstance(file_as_list, str) == True:
+            error = file_as_list
             return error
+    file_list, list_col_order = get_columns(file_as_list, extension)
+    if list_col_order == None:
+        error = file_list
+        return error
+    dict_list = fill_dict(file_list, list_col_order)
+    peds_merged = merge_peds(dict_list)
 
-        lines_list, extension = get_lines_content(post_data)
-        separator = check_extension(extension, lines_list[0])
-        if separator.startswith("Import"):
-            error = separator
-            return error
-        if isinstance(lines_list[0], list):
-            file_as_list = lines_list
-        else:
-            if separator == "xlsx":
-                if "\t" in lines_list[0]:
-                    separator = "\t"
-                else:
-                    separator = ","
-            file_as_list = get_rows_list(lines_list, separator)
-            log.debug(f"files_as_list:{file_as_list}")
-            if isinstance(file_as_list, str) == True:
-                error = file_as_list
-                return error
-        file_list, list_col_order = get_columns(file_as_list, extension)
-        if list_col_order == None:
-            error = file_list
-            return error
-        dict_list = fill_dict(file_list, list_col_order)
-        peds_merged = merge_peds(dict_list)
+    # unique ids
+    for i in range(len(peds_merged)):
+        id_list.append(peds_merged[i]["id"])
+    if len(set(id_list)) != len(id_list):
+        error = "Import error : IDs are not unique."
+        return error
 
-        # unique ids
-        for i in range(len(peds_merged)):
-            id_list.append(peds_merged[i]["id"])
-        if len(set(id_list)) != len(id_list):
-            error = "Import error : IDs are not unique."
-            return error
+    peds_merged = check_fam_id(peds_merged)
 
-        peds_merged = check_fam_id(peds_merged)
-
-        log.debug("end upload")
-        return jsonify(peds_merged)
+    log.debug("end upload")
+    return jsonify(peds_merged)
 
 
 @app.route("/download", methods=["GET", "POST"])
