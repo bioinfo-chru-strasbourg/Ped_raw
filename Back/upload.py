@@ -2,6 +2,7 @@ from flask import session
 import json
 import csv
 import logging as log
+import re
 import io
 from collections import OrderedDict
 from openpyxl import load_workbook
@@ -216,6 +217,9 @@ def fill_dict(file_list: list, list_col_order: list):
         ):  # get lines in dictionnaries, for each column
             column = list_col_order[n]
             value = file_list[line + addition][n]
+
+            if isinstance(value, str):
+                value = re.sub(r'\s+', '', value)
 
             if column == "HPOList" or column == "starkTags":
                 mydict[column] = value.split(",")
