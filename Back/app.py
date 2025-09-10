@@ -40,7 +40,12 @@ set_log_level("debug")
 
 # instantiate the app
 app = Flask(__name__)
-app.secret_key = '_5#y2L"F4Q8z77ec]/'
+try:
+    secret_key = os.environ["FLASK_SECRET_KEY"]
+except KeyError:
+    log.warning("No secret key found in environment, using default one.")
+    secret_key = '_5#y2L"F4Q8z77ec]/'
+app.secret_key = secret_key
 
 
 # enable CORS
