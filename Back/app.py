@@ -13,6 +13,9 @@ from upload import (
     check_fam_id,
 )
 import os
+from os.path import join as osj
+
+DATA_PATH = "/Data"
 
 
 def set_log_level(verbosity: str):
@@ -62,8 +65,7 @@ CORS(
 
 
 def get_files():
-    path_to_data = "../Data/"
-    files = glob.glob(path_to_data + "*.json")
+    files = glob.glob(osj(DATA_PATH, "*.json"))
     return files
 
 
@@ -75,7 +77,7 @@ def get_name_file(files: list, mode: str):
             file_list.append(split[len(split) - 1][:-5])
         return file_list
     elif mode == "get":
-        my_file = "../Data/" + files + ".json"
+        my_file = osj(DATA_PATH, files + ".json")
         return my_file
 
 
@@ -106,7 +108,7 @@ def all_files():
         )  # get the session value
 
         if session["CURRENT_FILE"] not in files:  # create new file
-            session["CURRENT_FILE"] = "../Data/" + session["CURRENT_FILE"]
+            session["CURRENT_FILE"] = osj(DATA_PATH, session["CURRENT_FILE"])
             if session["CURRENT_FILE"].endswith(".json") == False:
                 session["CURRENT_FILE"] = session["CURRENT_FILE"] + ".json"
             with open(session["CURRENT_FILE"], "w") as new_file:
