@@ -5,11 +5,14 @@ services:
         build: ./Back
         env_file:
             - .env
+        environment:
+            # Change this if you wish to have the FRONT server on a different machine than the BACK
+            - FRONT_SERVER=${BACK_SERVER}:${EXTPORT}
         volumes:
             - ${BACKPATH}:/Back:rw
             - ${DATAPATH}:/Data:rw
         ports:
-            - 4280:4280
+            - ${BACK_PORT}:4280
         networks:
             - solene_network
 

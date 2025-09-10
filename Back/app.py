@@ -49,7 +49,13 @@ app.secret_key = secret_key
 
 
 # enable CORS
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+# The origin is the front address that the browser sees
+# The origin has to include the port
+CORS(
+    app,
+    resources={r"/*": {"origins": f"{os.environ['FRONT_SERVER']}"}},
+    supports_credentials=True,
+)
 
 
 ##PED
