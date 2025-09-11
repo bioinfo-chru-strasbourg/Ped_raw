@@ -300,7 +300,7 @@ export default {
       showError: ref(false),
       string_save: "",
       downloadDialog: ref(false),
-      downloadTypes: ["Ped file", "Advanced Ped file"],
+      downloadTypes: ["Ped file", "Ped with HPO (ped9)"],
       typeFile: '',
     };
   },

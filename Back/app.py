@@ -227,8 +227,8 @@ def download_file():
                         sep="\t",
                     )
 
-        if post_data["typefile"] == "Advanced Ped file":
-            log.debug(" Advanced Ped file if")
+        if post_data["typefile"] == "Ped with HPO (ped9)":
+            log.debug(" Ped with HPO (ped9) if")
             with open(os.path.join(tmp_dir, "download.ped"), "w") as output:
                 print(
                     "#Family ID",

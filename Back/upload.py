@@ -177,7 +177,7 @@ def get_columns(file_list0: list, extension: str):
         list_col_order = ["famID", "id", "paternalID", "maternalID", "sex", "phenotype"]
         return file_list0, list_col_order
 
-    elif extension == "ped" and len(file_list0[0]) == 9:  # advanced ped file
+    elif extension == "ped" and len(file_list0[0]) == 9:  # Ped with HPO (ped9)
         session["header"] = False
         list_col_order = [
             "famID",
