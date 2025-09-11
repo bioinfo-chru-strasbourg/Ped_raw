@@ -50,9 +50,9 @@
 
       <DataTable ref="dt" :value="peds" v-model:editingRows="editingRows" v-model:selection="selectedPeds"
         v-model:filters="filters" dataKey="id" editMode="row" filterDisplay="row" @row-edit-save="onRowEditSave"
-        tableClass="editable-cells-table" :paginator="true" :rows="10" showGridlines
-        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLinkLastPageLink CurrentPageReport RowsPerPageDropdown"
-        :rowsPerPageOptions="[5, 10, 25, 50]"
+        tableClass="editable-cells-table" :paginator="true" :rows="15" showGridlines
+        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+        :rowsPerPageOptions="[15, 25, 50, 100]"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} peds">
 
         <Column selectionMode="multiple" style="width: 2rem" :exportable="false"></Column>
