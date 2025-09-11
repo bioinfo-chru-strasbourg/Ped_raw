@@ -59,7 +59,7 @@
         <Column field="id" header="Patient ID" sortable style="min-width: 9rem;">
           <template #filter="{ filterModel, filterCallback }">
             <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit any key to filter'" type="text"
-              @keydown="filterCallback()" class="p-column-filter" placeholder="Search for an ID" style="width: 9rem;" />
+              @keydown="filterCallback()" class="p-column-filter" placeholder="Search ID" style="min-width: 7rem;"/>
           </template>
           <template #editor="{ data, field }">
             <InputText v-model="data[field]" required="true" style="min-width: 8rem; max-width: 10rem;" />
@@ -68,7 +68,7 @@
         <Column field="famID" header="Family ID" sortable style="min-width: 8rem;">
           <template #filter="{ filterModel, filterCallback }">
             <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit any key to filter'" type="text"
-              @keydown="filterCallback()" class="p-column-filter" placeholder="Search for an ID" style="width: 9rem;" />
+              @keydown="filterCallback()" class="p-column-filter" placeholder="Search ID" style="min-width: 7rem;"/>
           </template>
           <template #editor="{ data, field }">
             <InputText v-model="data[field]" required="true" style="min-width: 8rem; max-width: 10rem;" />
@@ -107,6 +107,10 @@
             <ToggleButton v-model="removeHpoDescriptions" class="btn-tiny p-column-title custom-toggle" onLabel="Show labels" offLabel="Remove labels" />
             HPOList 
           </template>
+          <template #filter="{ filterModel, filterCallback }">
+            <InputText v-model="filterModel.value" v-tooltip.top.focus="'Hit any key to filter'" type="text"
+              @keydown="filterCallback()" class="p-column-filter" placeholder="Search for a HPO number (not a label)" />
+          </template>
           <template #body="{ data, field }">
             <div class="chips-container">
             <Chip 
@@ -130,7 +134,7 @@
           </div>
           </template>
           <template #editor="{ data, field }">
-            <Chips id="HPOList" v-model="data[field]" rows="3" cols="20" separator="," style="width: 6rem" />
+            <Chips id="HPOList" v-model="data[field]" rows="3" cols="20" separator="," style="min-width: 6rem" />
           </template>
         </Column>
         <Column field="starkTags" header="STARK Tags" sortable style="min-width: 11rem">
@@ -315,7 +319,8 @@ export default {
       phenotypes: ["Affected", "Unaffected", "Missing"],
       filters: ref({
         'id': { value: null, matchMode: FilterMatchMode.CONTAINS },
-        'famID': { value: null, matchMode: FilterMatchMode.CONTAINS }
+        'famID': { value: null, matchMode: FilterMatchMode.CONTAINS },
+        'HPOList': { value: null, matchMode: FilterMatchMode.CONTAINS }
       }),
       showMessage: ref(false),
       showError: ref(false),
@@ -663,7 +668,6 @@ html {
 
 .btn-tiny {
   float: right !important;
-  margin-left: 0.5rem !important;
   margin-right: 1rem !important;
   padding: 0.6rem 0.4rem !important;
   font-size: 5rem !important;
@@ -677,7 +681,7 @@ html {
 }
 
 .custom-toggle.p-highlight {
-  background-color: #DFECEE !important; /* light teal highlight */
+  background-color: #DFECEE !important;
   border-color: #A9C5C9 !important; /* slightly darker border */
   color: #2F4F4F !important; /* dark slate text color */
 }
@@ -691,4 +695,9 @@ html {
   flex-wrap: wrap;
   gap: 0.6rem; /* small gap between chips */
 } 
+
+/* Change the color of the placeholder text in column header's filters */
+.p-column-filter::placeholder {
+  color: rgba(128, 128, 128, 0.753) !important;
+}
 </style>
