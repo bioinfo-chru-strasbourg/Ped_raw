@@ -31,4 +31,10 @@ Back/*test.*
 Data/
 Back/__pycache__/
 
+
+# An example .env file is provided for ease of use, but its actual values should not be committed.
+# To ignore changes to .env file, use in terminal:
+# git update-index --assume-unchanged .env
+# To track changes again, use: 
+# git update-index --no-assume-unchanged .env
 .env
