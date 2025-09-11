@@ -5,7 +5,7 @@
 
     <Dropdown v-model="selectedBase" :options="bases" placeholder="Search for or select an existing pedigree database"
       class="w-full md:w-14rem" style="min-width: 40%; margin-right: 2rem;" @change="selectBase()" />
-    <Button label="Create new database" icon="pi pi-plus" severity="success" size="small" @click="DialogCreateDB()"
+    <Button label="Create new database" class="btn-solene" icon="pi pi-plus" severity="success" size="small" @click="DialogCreateDB()"
       raised />
 
   </nav>
@@ -15,19 +15,19 @@
         <template #start>
           <span
             v-tooltip.right="{ value: `<h6> Use this button when you have selected a database if you want to add a row. Don't forget to save your changes. </h6>`, escape: true, class: 'custom-error' }">
-            <Button class="m-1" label="Add" icon="pi pi-plus" severity="success" @click="onAddButtonClicked"
+            <Button class="m-1 btn-solene" label="Add" icon="pi pi-plus" severity="success" @click="onAddButtonClicked"
               :disabled="!isBaseSelected" /> </span>
           <span
             v-tooltip.bottom="{ value: `<h6> Select rows and use this button to delete them. Don't forget to save your changes. </h6>`, escape: true, class: 'custom-error' }">
-            <Button class="m-1" label="Delete" icon="pi pi-trash" severity="danger" @click="deletePedsDialog = true"
+            <Button class="m-1 btn-solene" label="Delete" icon="pi pi-trash" severity="danger" @click="deletePedsDialog = true"
               :disabled="!selectedPeds || !selectedPeds.length" /></span>
         </template>
         <template #center>
           <span
             v-tooltip.bottom="{ value: `<h6> Use this button when you have made changes to a database to save them. </h6>`, escape: true, class: 'custom-error' }">
-            <Button class="m-1" v-if="unsavedChanges == false" label="Saved." icon="pi pi-check-square" severity="success"
+            <Button class="m-1 btn-solene" v-if="unsavedChanges == false" label="Saved." icon="pi pi-check-square" severity="success"
               size="large" disabled @click="confirmSaveDialog = true" />
-            <Button class="m-1" v-if="unsavedChanges" label="Save your changes to database" icon="pi pi-save
+            <Button class="m-1 btn-solene" v-if="unsavedChanges" label="Save your changes to database" icon="pi pi-save
 " severity="warning" size="large" @click="confirmSaveDialog = true" raised />
           </span>
         </template>
@@ -35,13 +35,13 @@
           <span
             v-tooltip.bottom="{ value: `<h6> Use this button when you have selected a database to import data into it. <br> <strong> More information is available in the 'Documentation' page. </strong> </h6>`, escape: true, class: 'custom-error' }">
             <FileUpload mode="basic" accept=".csv,.tsv,.xlsx,.ped" :maxFileSize="1000000" label="Import"
-              chooseLabel="Import" class="m-1" :disabled="!isBaseSelected" :auto="true" url="localhost:4280/upload"
+              chooseLabel="Import" class="m-1 btn-solene" :disabled="!isBaseSelected" :auto="true" url="localhost:4280/upload"
               customUpload @uploader="onUpload" />
           </span>
           <span
             v-tooltip.left="{ value: `<h6> Use this button when you have selected a database to download its data. </h6>`, escape: true, class: 'custom-error' }">
 
-            <Button class="m-1" label="Download" severity="help" icon="pi pi-download" @click="downloadDialog = true"
+            <Button class="m-1 btn-solene" label="Download" severity="help" icon="pi pi-download" @click="downloadDialog = true"
               :disabled="!isBaseSelected" />
 
           </span>
@@ -102,24 +102,32 @@
             <InputText v-model="data[field]" style="width: 6rem" />
           </template>
         </Column>
-        <Column field="HPOList" header="HPO List" sortable style="min-width: 11rem">
+        <Column field="HPOList" sortable style="min-width: 11rem">
+          <template #header>
+            <ToggleButton v-model="removeHpoDescriptions" class="btn-tiny p-column-title custom-toggle" onLabel="Show labels" offLabel="Remove labels" />
+            HPOList 
+          </template>
           <template #body="{ data, field }">
+            <div class="chips-container">
             <Chip 
               v-for="(hpo, index) in data[field]" 
               :style="{ 
-              marginRight: '0.5rem', 
-              marginBottom: '0.5rem', 
               backgroundColor: index % 2 === 0 ? '#DFECEE' : '#ECEEDF' 
               }" 
             >
+            <!-- <Chip v-for="(hpo, index) in data[field]" > -->
             <!-- alternative palettes:
             '#DFECEE' : '#ECEEDF' 
             '#c5e6f0' : '#ECEEDF' 
             https://colorhunt.co/palette/f5efe6e8dfca6d94c5cbdceb
             https://colorhunt.co/palette/bbdce5eceedfd9c4b0cfab8d
             -->
+            <span v-if="removeHpoDescriptions">{{ hpo }}</span>
+            <span v-else>
                 {{ hpo }} <span v-if="hpoDescriptions[hpo]">: {{ hpoDescriptions[hpo] }}</span>
+            </span>
             </Chip>
+          </div>
           </template>
           <template #editor="{ data, field }">
             <Chips id="HPOList" v-model="data[field]" rows="3" cols="20" separator="," style="width: 6rem" />
@@ -316,6 +324,7 @@ export default {
       downloadTypes: ["Ped file", "Ped with HPO (ped9)"],
       typeFile: '',
       hpoDescriptions: ref({}),
+      removeHpoDescriptions: ref(false),
     };
   },
   components: {
@@ -647,9 +656,39 @@ html {
   font-size: 75%;
 }
 
-.p-button-label {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.3rem;
-
+.btn-solene {
+  font-family: 'Playfair Display', serif !important;
+  font-size: 1.3rem !important;
 }
+
+.btn-tiny {
+  float: right !important;
+  margin-left: 0.5rem !important;
+  margin-right: 1rem !important;
+  padding: 0.6rem 0.4rem !important;
+  font-size: 5rem !important;
+  line-height: 1 !important;
+  /* border-radius: 0.2rem !important; */
+}
+
+.p-togglebutton {
+  font-size: 1.1rem !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+.custom-toggle.p-highlight {
+  background-color: #DFECEE !important; /* light teal highlight */
+  border-color: #A9C5C9 !important; /* slightly darker border */
+  color: #2F4F4F !important; /* dark slate text color */
+}
+.custom-toggle.p-highlight:hover {
+  background-color: #C7D CDC !important; /* slightly darker on hover */
+  border-color: #8BA5A7 !important;
+}
+
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem; /* small gap between chips */
+} 
 </style>

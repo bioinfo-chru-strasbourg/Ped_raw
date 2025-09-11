@@ -44,6 +44,7 @@ import StyleClass from 'primevue/styleclass';
 import TabMenu from 'primevue/tabmenu';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import ToggleButton from 'primevue/togglebutton';
 import Tooltip from 'primevue/tooltip';
 
 
@@ -86,6 +87,7 @@ app.component('Skeleton', Skeleton);
 app.component('TabMenu', TabMenu);
 app.component('TabView', TabView);
 app.component('TabPanel', TabPanel);
+app.component('ToggleButton', ToggleButton)
 
 
 
