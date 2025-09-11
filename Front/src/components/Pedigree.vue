@@ -118,7 +118,7 @@
             https://colorhunt.co/palette/f5efe6e8dfca6d94c5cbdceb
             https://colorhunt.co/palette/bbdce5eceedfd9c4b0cfab8d
             -->
-              {{ hpo }} : {{ hpoDescriptions[hpo] }}
+                {{ hpo }} <span v-if="hpoDescriptions[hpo]">: {{ hpoDescriptions[hpo] }}</span>
             </Chip>
           </template>
           <template #editor="{ data, field }">
