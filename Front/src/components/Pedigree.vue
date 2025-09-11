@@ -104,8 +104,21 @@
         </Column>
         <Column field="HPOList" header="HPO List" sortable style="min-width: 11rem">
           <template #body="{ data, field }">
-            <Chip v-for="hpo in data[field]">
-              {{ hpo }}
+            <Chip 
+              v-for="(hpo, index) in data[field]" 
+              :style="{ 
+              marginRight: '0.5rem', 
+              marginBottom: '0.5rem', 
+              backgroundColor: index % 2 === 0 ? '#DFECEE' : '#ECEEDF' 
+              }" 
+            >
+            <!-- alternative palettes:
+            '#DFECEE' : '#ECEEDF' 
+            '#c5e6f0' : '#ECEEDF' 
+            https://colorhunt.co/palette/f5efe6e8dfca6d94c5cbdceb
+            https://colorhunt.co/palette/bbdce5eceedfd9c4b0cfab8d
+            -->
+              {{ hpo }} : {{ hpoDescriptions[hpo] }}
             </Chip>
           </template>
           <template #editor="{ data, field }">
@@ -302,6 +315,7 @@ export default {
       downloadDialog: ref(false),
       downloadTypes: ["Ped file", "Ped with HPO (ped9)"],
       typeFile: '',
+      hpoDescriptions: ref({}),
     };
   },
   components: {
@@ -367,7 +381,18 @@ export default {
       } else {
         this.chooseBase();
       }
-
+    },
+    getHPODescriptions() {
+    axios.get(this.serverURL + '/hpo', { withCredentials: true })
+      .then((res) => {
+        this.hpoDescriptions = res.data;
+        console.log('HPO descriptions:', this.hpoDescriptions);
+      })
+      .catch((error) => {
+        console.error(error);
+        this.message = "Error while getting HPO descriptions."
+        this.showError = true;
+      });
     },
     chooseBase() {
       this.showError = false;
@@ -609,6 +634,7 @@ export default {
   created() {
     this.originalTable = true;
     this.getBases();
+    this.getHPODescriptions();
     this.unsavedChanges = false;
   },
 };

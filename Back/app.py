@@ -15,6 +15,8 @@ from upload import (
 import os
 from os.path import join as osj
 
+from pronto import Ontology
+
 DATA_PATH = "/Data"
 
 
@@ -59,7 +61,7 @@ CORS(
     resources={r"/*": {"origins": f"{os.environ['FRONT_SERVER']}"}},
     supports_credentials=True,
 )
-
+# CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True) #for dev only
 
 ##PED
 
@@ -262,6 +264,29 @@ def download_file():
 
         return send_file(os.path.join(tmp_dir, "download.ped"))
 
+
+@app.route("/hpo", methods=["GET"])
+def get_hpo():
+    """
+    Return a dictionary such as:
+    {
+        "HP:0000001": "All",
+        "HP:0000002": "Abnormality of body height",
+        ...
+    }
+    loaded from the HPO ontology file provided in the HPO_FILE environment variable.
+    """
+    hpo_file = os.environ.get("HPO_FILE")
+    if hpo_file is None:
+        raise ValueError("HPO_FILE environment variable not set")
+    
+    ont = Ontology(hpo_file)
+    id_to_name = {}
+    for term in ont.terms():
+        id_to_name[term.id] = term.name
+        for alt_id in getattr(term, "alt_ids", []):
+            id_to_name[alt_id] = term.name
+    return jsonify(id_to_name)
 
 # sanity check route, la route du site backend ou il va chercher les infos
 @app.route("/ping", methods=["POST"])
