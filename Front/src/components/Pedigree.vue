@@ -99,7 +99,22 @@
         </Column>
         <Column field="alias" header="Aliases" sortable style="min-width: 7rem">
           <template #editor="{ data, field }">
-            <InputText v-model="data[field]" style="width: 6rem" />
+            <Chips id="alias" v-model="data[field]" rows="3" cols="20" separator="," style="min-width: 6rem" />
+          </template>
+          <template #body="{ data, field }">
+            <span v-if="data[field].length === 0"></span>
+            <span v-else>
+              <div class="chips-container">
+                <Chip 
+                v-for="(alias, index) in data[field]" 
+                :style="{ 
+                backgroundColor: index % 2 === 0 ? '#DFECEE' : '#ECEEDF' 
+                }" 
+              >
+              {{ alias }}
+              </Chip>
+              </div>
+            </span>
           </template>
         </Column>
         <Column field="HPOList" sortable style="min-width: 11rem">
@@ -154,17 +169,16 @@
   <Dialog v-model:visible="pedDialog" :style="{ width: '50rem' }" header="Pedigree file form" :modal="true"
     class="p-fluid">
     <div class="field">
-      <label for="id">Patient ID</label>
+      <label for="id">Patient *</label>
       <InputText id="id" v-model.trim="ped.id" required="true" autofocus
         :class="{ 'p-invalid': submitted && !ped.id | submitted && this.idDuplicate == true }" />
       <small class="p-error" v-if="submitted && !ped.id | submitted && this.idDuplicate == true">A unique ID is
         required.</small>
     </div>
     <div class="field">
-      <label for="id">Family ID</label>
+      <label for="id">Family ID *</label>
       <InputText id="famID" v-model.trim="ped.famID" autofocus />
     </div>
-
     <div class="field">
       <label for="paternalID">Paternal ID</label>
       <InputText id="paternalID" v-model="ped.paternalID" rows="3" cols="20" />
@@ -183,14 +197,14 @@
         required="true" />
     </div>
     <div class="field">
-      <label for="alias">Alias</label>
-      <InputText id="alias" v-model="ped.alias" rows="3" cols="20" />
+      <label for="alias">Aliases (alternative sample names separated by commas ",")</label>
+      <Chips id="alias" v-model="ped.alias" rows="3" cols="20" separator="," />
     </div>
     <div class="field">
-      <label for="HPOList">HPO List (tags separated by a comma ",")</label>
+      <label for="HPOList">HPO List (HPO terms separated by commas ",")</label>
       <Chips id="HPOList" v-model="ped.HPOList" rows="3" cols="20" separator="," />
       <div class="field">
-        <label for="starkTags">STARK Tags (tags separated by an exclamation point "!" )</label>
+        <label for="starkTags">STARK Tags (tags separated by exclamation points "!" )</label>
         <Chips id="starkTags" v-model="ped.starkTags" rows="3" cols="20" separator="!" />
       </div>
       <div>
@@ -293,7 +307,7 @@ export default {
     return {
       serverURL: getBackendURL(),
       peds: ref(),
-      ped: ref({ "id": "", "famID": "", "paternalID": "", "maternalID": "", "sex": "Unknown", "phenotype": "Missing", "alias": "", "HPOList": [], "starkTags": [] }),
+      ped: ref({ "id": "", "famID": "", "paternalID": "", "maternalID": "", "sex": "Unknown", "phenotype": "Missing", "alias": [], "HPOList": [], "starkTags": [] }),
       originalTable: ref(false),
       originalPed: ref({}),
       unsavedChanges: ref(false),
@@ -494,7 +508,7 @@ export default {
     },
     cancelAddTemp() {
       this.pedDialog = false;
-      this.ped = { 'id': "", 'alias': "", "paternalID": "", "maternalID": "", "sex": "Unknown", "phenotype": "Missing", "HPOList": [], "starkTags": [] };
+      this.ped = { 'id': "", "paternalID": "", "maternalID": "", "sex": "Unknown", "phenotype": "Missing", "alias": [], "HPOList": [], "starkTags": [] };
       this.submitted = false;
     },
     getDuplicate(ped) {
@@ -518,7 +532,7 @@ export default {
         this.ped = this.removeWhitespace(this.ped);
         this.peds.push(JSON.parse(JSON.stringify(this.ped))); //copie dans peds (deep copy)
         this.pedDialog = false;
-        this.ped = { 'id': "", 'alias': "", "paternalID": "", "maternalID": "", "sex": "Unknown", "phenotype": "Missing", "HPOList": [], "starkTags": [] };
+        this.ped = { 'id': "", "paternalID": "", "maternalID": "", "sex": "Unknown", "phenotype": "Missing", 'alias': [], "HPOList": [], "starkTags": [] };
         console.log("peds after the add", this.peds);
         this.tablesChanged();
         this.submitted = false;
